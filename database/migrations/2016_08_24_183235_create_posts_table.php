@@ -20,6 +20,7 @@ class CreatePostsTable extends Migration
             $table->longtext('content');
             $table->integer('created_by')->unsigned();
             $table->foreign('created_by')->references('id')->on('users');
+            $table->integer('subreddit_id')->unsigned();
             $table->timestamps();
         });
     }

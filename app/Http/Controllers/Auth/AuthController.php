@@ -23,7 +23,8 @@ class AuthController extends Controller
 
     use AuthenticatesAndRegistersUsers, ThrottlesLogins;
     protected $redirectPath = '/';
-    protected $loginPath = '/login';
+    protected $loginPath = '/auth/login';
+    protected $logoutPath="/";
     /**
      * Create a new authentication controller instance.
      *
@@ -31,7 +32,7 @@ class AuthController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('guest', ['except' => 'getLogout']);
+        $this->middleware('guest', ['only' => ['getLogin','UsersController@dashboard']]);
     }
 
     /**
@@ -43,10 +44,9 @@ class AuthController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'username' => 'required|max:255|min:6|unique:users,username',
-            'retype_password'=>'required|same:password',
+          'name' => 'required|max:255',
+            'email' => 'required|email|max:255|unique:users',
             'password' => 'required|confirmed|min:6',
-            'email' => 'required|email|max:255|unique:users'
         ]);
     }
 

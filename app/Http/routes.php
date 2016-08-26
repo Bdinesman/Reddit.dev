@@ -10,14 +10,18 @@
 | and give it the controller to call when that URI is requested.
 |
 */
-
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::resource('/posts','PostsController');
+Route::resource('/users','UsersController');
+Route::get('/','UsersController@dashboard');
 Route::get('/posts/all','PostsController@index');
-//Route::get('/register','UsersController@create');
-//Route::post('/register','UsersController@store');
-Route::get('/register', 'Auth\AuthController@getRegister');
-Route::post('/register', 'Auth\AuthController@postRegister');
+Route::get('/register','UsersController@create');
+Route::post('/register','UsersController@store');
+Route::get('auth/login', 'Auth\AuthController@getLogin');
+Route::post('auth/login', 'Auth\AuthController@postLogin');
+Route::get('auth/logout', 'Auth\AuthController@getLogout');
+Route::get('/posts/create','PostsController@create');
+Route::post('/posts/create','PostsController@store');
+//Route::get('/register', 'Auth\AuthController@getRegister');
+//Route::post('/register', 'Auth\AuthController@postRegister');
 
 

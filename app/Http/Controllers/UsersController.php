@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Post;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
@@ -14,6 +14,9 @@ class UsersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function __construct(){
+        //$this->middleware('auth');
+    }
     public function index()
     {
         //
@@ -37,17 +40,20 @@ class UsersController extends Controller
      */
     public function store(Request $request)
     {
-        $rules=array('username'=>'required|max:20|min:5|',
+        if($request->user()){
+            return view('dashboard');
+        }
+        $rules=array('username'=>'required|max:20|min:5|unique:users,username',
             'password'=>'required|max:30|min:6|',
             'retype_password'=>'required|same:password',
             'email'=>'required|max:50|min:5|email');
         $this->validate($request,$rules);
         $user=new \App\User();
         $user->username=$request->username;
-        $user->password=$request->password;
+        $user->password=bcrypt($request->password);
         $user->email=$request->email;
         $user->save();
-        return $user;
+        return view('dashboard');
 
     }
 
@@ -95,4 +101,12 @@ class UsersController extends Controller
     {
         //
     }
+    public function dashboard(Request $request){
+    $posts=Post::all();
+    if($request->user()){
+        $user=$request->user();
+        $data=['user'=>$user,'posts'=>$posts];
+    }
+        $data=['posts'=>$posts];
+    return view('dashboard')->with('data',$data);    }
 }

@@ -25,9 +25,13 @@ class PostsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        $currentUser=$request->user();
+        if(!isset($currentUser)){
+            return redirect('auth/login');
+        }
+        return view('posts_create');
     }
 
     /**
@@ -38,7 +42,24 @@ class PostsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $currentUser=$request->user();
+        if(!isset($currentUser)){
+            return redirect('auth/login');
+        }
+        $rules=array(
+            'title'=>'required|min:6|max:25',
+            'url'=>'max:200|url',
+            'content'=>'max:2000|',
+            'subreddit'=>'required|alpha|');
+        $this->validate($request,$rules);
+        $post=new \App\Post;
+        $post->title=$request->get('title');
+        $post->url=$request->get('url');
+        $post->content=$request->get('content');
+        $post->subreddit_id=$request->get('subreddit');
+        $post->created_by=$request->user()->id;
+        $post->save();
+        return redirect('/');
     }
 
     /**
